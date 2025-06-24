@@ -17,6 +17,7 @@ Once logged in, you can [create a structure from a sample](https://cloud.griptap
 | Multiple Agents on Griptape Cloud | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape_multi_agent_workflows) |
 | Run your Langchain code on Griptape Cloud | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/langchain_calculator) |
 | Model Switcher with Griptape | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape_model_switcher) |
+| Sabba Multi-Knowledge Single Model | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/sabba_multi_knowledge_single_model) |
 | Griptape Task Memory and Off Prompt | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape_off_prompt) |
 | Griptape Chat Memory Agent | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape_chat_memory_agent) |
 | Find and Replace Transform | [LINK](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape_find_replace_transform) |
