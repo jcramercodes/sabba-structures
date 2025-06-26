@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from dotenv import load_dotenv
 from griptape.configs import Defaults
@@ -20,14 +21,21 @@ load_dotenv()
 
 
 def get_knowledge_base_tools(knowledge_base_id: str | None) -> list[BaseTool]:
+
+    api_key = os.environ.get("GT_CLOUD_API_KEY")
+    if not api_key:
+        print("⚠️  Warning: GT_CLOUD_API_KEY not found. Knowledge base queries will fail.")
+        return []
     if knowledge_base_id is None:
         return []
+    
     engine = RagEngine(
         retrieval_stage=RetrievalRagStage(
             retrieval_modules=[
                 VectorStoreRetrievalRagModule(
                     vector_store_driver=GriptapeCloudVectorStoreDriver(
                         knowledge_base_id=knowledge_base_id,
+                        api_key=api_key,
                     )
                 )
             ]

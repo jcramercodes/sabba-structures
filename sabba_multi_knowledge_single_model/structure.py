@@ -1,8 +1,11 @@
 import argparse
+import os
 import sys
 from typing import List
 
+import requests
 from dotenv import load_dotenv
+from griptape.artifacts import TextArtifact
 from griptape.configs import Defaults
 from griptape.configs.drivers import (
     AnthropicDriversConfig,
@@ -33,6 +36,28 @@ from knowledge_bases import (
 load_dotenv()
 
 
+class CloudSearchDriver(GriptapeCloudVectorStoreDriver):
+    """Custom driver that uses /search endpoint instead of /query for Hybrid/Text KBs."""
+    
+    def query(self, query: str, *, count: int | None = None, **kw):
+        """Use /search endpoint instead of /query for Hybrid knowledge bases."""
+        url = f"{self.base_url}/api/knowledge-bases/{self.knowledge_base_id}/search"
+        body = {"query": query, "count": count or 5}
+        
+        try:
+            response = requests.post(url, json=body, headers=self.headers)
+            response.raise_for_status()
+            result = response.json()
+            
+            # The /search endpoint returns {"response": ["text1", "text2", ...]}
+            texts = result.get("response", [])
+            return [TextArtifact(text) for text in texts]
+            
+        except Exception as e:
+            print(f"⚠️  Search failed for KB {self.knowledge_base_id}: {e}")
+            return []
+
+
 def get_config(provider: str) -> DriversConfig | None:
     """Get the appropriate driver configuration for the specified provider."""
     if provider == "openai":
@@ -48,6 +73,12 @@ def get_knowledge_base_tools(knowledge_base_ids: List[str]) -> List[BaseTool]:
     """Create RAG tools for each knowledge base ID provided."""
     tools = []
     
+    # Get the API key from environment variables
+    api_key = os.environ.get("GT_CLOUD_API_KEY")
+    if not api_key:
+        print("⚠️  Warning: GT_CLOUD_API_KEY not found. Knowledge base queries will fail.")
+        return []
+    
     for i, kb_id in enumerate(knowledge_base_ids):
         if kb_id:
             # Get knowledge base metadata if available
@@ -62,6 +93,7 @@ def get_knowledge_base_tools(knowledge_base_ids: List[str]) -> List[BaseTool]:
                     retrieval_modules=[
                         VectorStoreRetrievalRagModule(
                             vector_store_driver=GriptapeCloudVectorStoreDriver(
+                                api_key=api_key,
                                 knowledge_base_id=kb_id,
                             )
                         )

@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["griptape[all]>=1.4.0", "python-dotenv>=1.0.1"]
+dependencies = [
+    "griptape[all]>=1.4.0",
+ "python-dotenv>=1.0.1",
+]
 [project.optional-dependencies]
 langchain = ["langchain-core>=0.3.35", "langchain-openai>=0.3.6"]
 slack = ["slack-bolt>=1.22.0"]
